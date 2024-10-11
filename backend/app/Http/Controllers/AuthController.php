@@ -91,5 +91,22 @@ class AuthController extends Controller
     }
 
 
+    public function me(Request $request){
+        $user = $request->user();
+
+        if(!$user){
+            return \response()->json([
+                "status" => "error",
+                "message" => "User not found"
+            ], 404);
+        }
+
+        return \response()->json([
+            "status" => "success",
+            "data" => $user
+        ]);
+
+    }
+
 
 }

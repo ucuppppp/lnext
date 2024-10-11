@@ -21,6 +21,8 @@ use App\Http\Controllers\LessonController;
 Route::middleware(['auth:sanctum'])->group(function () {
     // AUTH
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('me', [AuthController::class, 'me']);
+
 
     // ------ COURSES START ------
     Route::get('/courses', [CourseController::class, 'index']);
