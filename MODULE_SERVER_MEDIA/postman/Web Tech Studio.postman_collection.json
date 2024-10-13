@@ -1,0 +1,4126 @@
+{
+	"info": {
+		"_postman_id": "c6d36683-6d21-4115-af46-6564baab43a8",
+		"name": "Web Tech Studio",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33213055"
+	},
+	"item": [
+		{
+			"name": "A - Authentication",
+			"item": [
+				{
+					"name": "A1 - Register",
+					"item": [
+						{
+							"name": "A1a - success (201)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody)",
+											"if(response?.data?.token) {",
+											"    pm.environment.set(\"userToken\", response.data.token);",
+											"}",
+											" ",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'User registration successful'",
+											"pm.test(\"Message is User registration successful\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"User registration successful\");",
+											"});",
+											"",
+											"// Test if 'data' is an object",
+											"pm.test(\"Data is an object\", function () {",
+											"    pm.response.to.have.jsonBody(\"data\").that.is.an('object');",
+											"});",
+											"",
+											"// Test if 'data' object contains specific fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData).to.have.all.keys('full_name', 'username', 'updated_at', 'created_at', 'id', 'token');",
+											"});",
+											"",
+											"// Test if 'data.full_name' is a string",
+											"pm.test(\"Full name is a string\", function () {",
+											"    pm.expect(pm.response.json().data.full_name).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.username' is a string",
+											"pm.test(\"Username is a string\", function () {",
+											"    pm.expect(pm.response.json().data.username).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.id' is a number",
+											"pm.test(\"ID is a number\", function () {",
+											"    pm.expect(pm.response.json().data.id).to.be.a('number');",
+											"});",
+											"",
+											"// Test if 'data.token' is a string",
+											"pm.test(\"Token is a string\", function () {",
+											"    pm.expect(pm.response.json().data.token).to.be.a('string');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\": \"Richard Roe\",\n    \"username\": \"richard.roe\",\n    \"password\": \"pass123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/register",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "A1b - invalid field (400)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody)",
+											"if(response?.data?.token) {",
+											"    pm.environment.set(\"userToken\", response.data.token);",
+											"}",
+											" ",
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"// Test if status is 'error'",
+											"pm.test(\"Status is error\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"error\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid field(s) in request'",
+											"pm.test(\"Message is Invalid field(s) in request\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid field(s) in request\");",
+											"});",
+											"",
+											"// Test if 'errors' is present in the response",
+											"pm.test(\"Errors field is present\", function () {",
+											"    pm.response.to.have.jsonBody(\"errors\");",
+											"}); ",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\": \"\",\n    \"username\": \"john.doe\" \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/register",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "A2 - Login",
+					"item": [
+						{
+							"name": "A2a - success as admin (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody)",
+											"if(response?.data?.token) {",
+											"    pm.environment.set(\"adminToken\", response.data.token);",
+											"}",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Login successful'",
+											"pm.test(\"Message is Login successful\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Login successful\");",
+											"});",
+											"",
+											"// Test if 'data' is an object",
+											"pm.test(\"Data is an object\", function () {",
+											"    pm.response.to.have.jsonBody(\"data\").that.is.an('object');",
+											"});",
+											"",
+											"// Test if 'data' object contains specific fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData).to.have.all.keys('id', 'username', 'created_at', 'updated_at', 'token', 'role');",
+											"});",
+											"",
+											"// Test if 'data.id' is a number",
+											"pm.test(\"ID is a number\", function () {",
+											"    pm.expect(pm.response.json().data.id).to.be.a('number');",
+											"});",
+											"",
+											"// Test if 'data.username' is a string",
+											"pm.test(\"Username is a string\", function () {",
+											"    pm.expect(pm.response.json().data.username).to.be.a('string');",
+											"}); ",
+											"",
+											"// Test if 'data.created_at' and 'data.updated_at' are in ISO 8601 format",
+											"pm.test(\"Date fields are in ISO 8601 format\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    var datePattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$/;",
+											"    pm.expect(datePattern.test(jsonData.created_at)).to.be.true;",
+											"    pm.expect(datePattern.test(jsonData.updated_at)).to.be.true;",
+											"});",
+											"",
+											"// Test if 'data.token' is a string",
+											"pm.test(\"Token is a string\", function () {",
+											"    pm.expect(pm.response.json().data.token).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.role' is a string",
+											"pm.test(\"Role is a string\", function () {",
+											"    pm.expect(pm.response.json().data.role).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.role' is a string",
+											"pm.test(\"Role is admin\", function () {",
+											"    pm.expect(pm.response.json().data.role).to.be.eq('admin');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"pass123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/login",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "A2a - success as user (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody)",
+											"if(response?.data?.token) {",
+											"    pm.environment.set(\"userToken\", response.data.token);",
+											"}",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Login successful'",
+											"pm.test(\"Message is Login successful\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Login successful\");",
+											"});",
+											"",
+											"// Test if 'data' is an object",
+											"pm.test(\"Data is an object\", function () {",
+											"    pm.response.to.have.jsonBody(\"data\").that.is.an('object');",
+											"});",
+											"",
+											"// Test if 'data' object contains specific fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData).to.have.all.keys('id', 'full_name', 'username', 'created_at', 'updated_at', 'token', 'role');",
+											"});",
+											"",
+											"// Test if 'data.id' is a number",
+											"pm.test(\"ID is a number\", function () {",
+											"    pm.expect(pm.response.json().data.id).to.be.a('number');",
+											"});",
+											"",
+											"// Test if 'data.username' is a string",
+											"pm.test(\"Username is a string\", function () {",
+											"    pm.expect(pm.response.json().data.username).to.be.a('string');",
+											"}); ",
+											"",
+											"// Test if 'data.created_at' and 'data.updated_at' are in ISO 8601 format",
+											"pm.test(\"Date fields are in ISO 8601 format\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    var datePattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$/;",
+											"    pm.expect(datePattern.test(jsonData.created_at)).to.be.true;",
+											"    pm.expect(datePattern.test(jsonData.updated_at)).to.be.true;",
+											"});",
+											"",
+											"// Test if 'data.token' is a string",
+											"pm.test(\"Token is a string\", function () {",
+											"    pm.expect(pm.response.json().data.token).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.role' is a string",
+											"pm.test(\"Role is a string\", function () {",
+											"    pm.expect(pm.response.json().data.role).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.role' is a string",
+											"pm.test(\"Role is admin\", function () {",
+											"    pm.expect(pm.response.json().data.role).to.be.eq('user');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"john.doe\",\n    \"password\": \"pass123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/login",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "A2b - invalid credentials (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const response = JSON.parse(responseBody)",
+											"if(response?.data?.user?.token) {",
+											"    pm.environment.set(\"userToken\", response.data.user.token);",
+											"}",
+											"",
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'authentication_failed'",
+											"pm.test(\"Status is authentication_failed\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"authentication_failed\");",
+											"});",
+											"",
+											"// Test if message is 'The username or password you entered is incorrect'",
+											"pm.test(\"Message is The username or password you entered is incorrect\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"The username or password you entered is incorrect\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"user0\",\n    \"password\": \"pass123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/login",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "noauth"
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "A3 - Logout",
+					"item": [
+						{
+							"name": "A3a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Logout successful'",
+											"pm.test(\"Message is Logout successful\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Logout successful\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/logout",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "A3b - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/logout",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "B - Course",
+			"item": [
+				{
+					"name": "B1 - Add course",
+					"item": [
+						{
+							"name": "B1a - success (201)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Course successfully added'",
+											"pm.test(\"Message is Course successfully added\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Course successfully added\");",
+											"});",
+											"",
+											"// Test if 'data' is an object",
+											"pm.test(\"Data is an object\", function () {",
+											"    pm.response.to.have.jsonBody(\"data\").that.is.an('object');",
+											"});",
+											"",
+											"// Test if 'data' object contains specific fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData).to.have.all.keys('name', 'slug', 'description', 'updated_at', 'created_at', 'id');",
+											"});",
+											"",
+											"// Test if 'data.name' is a string",
+											"pm.test(\"Name is a string\", function () {",
+											"    pm.expect(pm.response.json().data.name).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.slug' is a string",
+											"pm.test(\"Slug is a string\", function () {",
+											"    pm.expect(pm.response.json().data.slug).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.description' is a string",
+											"pm.test(\"Description is a string\", function () {",
+											"    pm.expect(pm.response.json().data.description).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.id' is a number",
+											"pm.test(\"ID is a number\", function () {",
+											"    pm.expect(pm.response.json().data.id).to.be.a('number');",
+											"});",
+											"",
+											"// Test if 'data.updated_at' and 'data.created_at' are in ISO 8601 format",
+											"pm.test(\"Date fields are in ISO 8601 format\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    var datePattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$/;",
+											"    pm.expect(datePattern.test(jsonData.updated_at)).to.be.true;",
+											"    pm.expect(datePattern.test(jsonData.created_at)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Web API Architecture\", \n    \"slug\": \"web-api-architecture\",\n    \"description\": \"Design and implement RESTful and GraphQL APIs.\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B1b - invalid field (400)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"// Test if status is 'error'",
+											"pm.test(\"Status is error\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"error\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid field(s) in request'",
+											"pm.test(\"Message is Invalid field(s) in request\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid field(s) in request\");",
+											"});",
+											"",
+											"// Test if 'errors' is present in the response",
+											"pm.test(\"Errors field is present\", function () {",
+											"    pm.response.to.have.jsonBody(\"errors\");",
+											"}); ",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"slug\": \"web-dev-fundamentals\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B1c - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B1d - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"New Course\",\n    \"slug\": \"new-course\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "B2 - Edit course",
+					"item": [
+						{
+							"name": "B2a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Course successfully updated'",
+											"pm.test(\"Message is Course successfully updated\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Course successfully updated\");",
+											"});",
+											"",
+											"// Test if 'data' is an object",
+											"pm.test(\"Data is an object\", function () {",
+											"    pm.response.to.have.jsonBody(\"data\").that.is.an('object');",
+											"});",
+											"",
+											"// Test if 'data' object contains specific fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    pm.expect(jsonData).to.have.all.keys('name', 'slug', 'description', 'is_published', 'updated_at', 'created_at', 'id');",
+											"});",
+											"",
+											"// Test if 'data.name' is a string",
+											"pm.test(\"Name is a string\", function () {",
+											"    pm.expect(pm.response.json().data.name).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.slug' is a string",
+											"pm.test(\"Slug is a string\", function () {",
+											"    pm.expect(pm.response.json().data.slug).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.description' is a string",
+											"pm.test(\"Description is a string\", function () {",
+											"    pm.expect(pm.response.json().data.description).to.be.a('string');",
+											"});",
+											"",
+											"// Test if 'data.id' is a number",
+											"pm.test(\"ID is a number\", function () {",
+											"    pm.expect(pm.response.json().data.id).to.be.a('number');",
+											"});",
+											"",
+											"// Test if 'data.is_published' is a boolean",
+											"pm.test(\"Is published is a boolean\", function () {",
+											"    pm.expect(pm.response.json().data.is_published).to.be.a('boolean');",
+											"});",
+											"",
+											"// Test if 'data.updated_at' and 'data.created_at' are in ISO 8601 format",
+											"pm.test(\"Date fields are in ISO 8601 format\", function () {",
+											"    var jsonData = pm.response.json().data;",
+											"    var datePattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$/;",
+											"    pm.expect(datePattern.test(jsonData.updated_at)).to.be.true;",
+											"    pm.expect(datePattern.test(jsonData.created_at)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Web API Architecture (published)\", \n    \"description\": \"Design and implement RESTful and GraphQL APIs. (published)\",\n    \"is_published\": true\n} ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B2d - invalid field (400)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"// Test if status is 'error'",
+											"pm.test(\"Status is error\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"error\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid field(s) in request'",
+											"pm.test(\"Message is Invalid field(s) in request\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid field(s) in request\");",
+											"});",
+											"",
+											"// Test if 'errors' is present in the response",
+											"pm.test(\"Errors field is present\", function () {",
+											"    pm.response.to.have.jsonBody(\"errors\");",
+											"}); ",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"is_published\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B2b - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Web API Architecture (published)\", \n    \"description\": \"Design and implement RESTful and GraphQL APIs. (published)\",\n    \"is_published\": true\n} ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/wrong-slug",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"wrong-slug"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B2c - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B2e - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Web API Architecture (published)\", \n    \"description\": \"Design and implement RESTful and GraphQL APIs. (published)\",\n    \"is_published\": true\n} ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "B3 - Delete course",
+					"item": [
+						{
+							"name": "B3a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Course successfully deleted'",
+											"pm.test(\"Message is Course successfully deleted\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Course successfully deleted\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B3b - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/wrong-slug",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"wrong-slug"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B3b - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/modern-javascript-essentials",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"modern-javascript-essentials"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B3b - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/modern-javascript-essentials",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"modern-javascript-essentials"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "B4 - Get all published courses",
+					"item": [
+						{
+							"name": "B4a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Courses retrieved successfully'",
+											"pm.test(\"Message is Courses retrieved successfully\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Courses retrieved successfully\");",
+											"});",
+											"",
+											"// Test if 'data' contains the 'courses' array",
+											"pm.test(\"Data contains courses array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.property('courses');",
+											"    pm.expect(jsonData.data.courses).to.be.an('array');",
+											"});",
+											"",
+											"// Test if 'courses' array contains objects with expected fields",
+											"pm.test(\"Courses array contains objects with expected fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    var courses = jsonData.data.courses;",
+											"    courses.forEach(function(course) {",
+											"        pm.expect(course).to.have.all.keys('id', 'name', 'slug', 'description', 'is_published', 'created_at', 'updated_at');",
+											"    });",
+											"});",
+											"",
+											"// Test if each course's fields have expected types",
+											"pm.test(\"Courses fields have expected types\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    var courses = jsonData.data.courses;",
+											"    courses.forEach(function(course) {",
+											"        pm.expect(course.id).to.be.a('number');",
+											"        pm.expect(course.name).to.be.a('string');",
+											"        pm.expect(course.slug).to.be.a('string');",
+											"        pm.expect(course.description).to.be.a('string');",
+											"        pm.expect(course.is_published).to.be.a('number');",
+											"        pm.expect(course.created_at).to.be.a('string');",
+											"        pm.expect(course.updated_at).to.be.a('string');",
+											"    });",
+											"});",
+											"",
+											"// Test if 'created_at' and 'updated_at' are in ISO 8601 format",
+											"pm.test(\"Date fields are in ISO 8601 format\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    var courses = jsonData.data.courses;",
+											"    var datePattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$/;",
+											"    courses.forEach(function(course) {",
+											"        pm.expect(datePattern.test(course.created_at)).to.be.true;",
+											"        pm.expect(datePattern.test(course.updated_at)).to.be.true;",
+											"    });",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B4b - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "B5 - Get course details",
+					"item": [
+						{
+							"name": "B5a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if message is 'Course details retrieved successfully'",
+											"pm.test(\"Message is Course details retrieved successfully\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Course details retrieved successfully\");",
+											"});",
+											"",
+											"// Test if 'data' contains the expected course details",
+											"pm.test(\"Data contains expected course details\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.all.keys('id', 'name', 'slug', 'description', 'is_published', 'created_at', 'updated_at', 'sets');",
+											"});",
+											"",
+											"// Test if 'data.sets' is an array",
+											"pm.test(\"Data sets is an array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.sets).to.be.an('array');",
+											"});",
+											"",
+											"// Test if each set contains expected fields",
+											"pm.test(\"Each set contains expected fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    jsonData.data.sets.forEach(function(set) {",
+											"        pm.expect(set).to.have.all.keys('id', 'name', 'order', 'lessons');",
+											"    });",
+											"});",
+											"",
+											"// Test if each set's 'lessons' is an array",
+											"pm.test(\"Each set's lessons is an array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    jsonData.data.sets.forEach(function(set) {",
+											"        pm.expect(set.lessons).to.be.an('array');",
+											"    });",
+											"});",
+											"",
+											"// Test if each lesson contains expected fields",
+											"pm.test(\"Each lesson contains expected fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    jsonData.data.sets.forEach(function(set) {",
+											"        set.lessons.forEach(function(lesson) {",
+											"            pm.expect(lesson).to.have.all.keys('id', 'name', 'order', 'contents');",
+											"        });",
+											"    });",
+											"});",
+											"",
+											"// Test if each lesson's 'contents' is an array",
+											"pm.test(\"Each lesson's contents is an array\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    jsonData.data.sets.forEach(function(set) {",
+											"        set.lessons.forEach(function(lesson) {",
+											"            pm.expect(lesson.contents).to.be.an('array');",
+											"        });",
+											"    });",
+											"});",
+											"",
+											"// Test if each content contains expected fields",
+											"pm.test(\"Each content contains expected fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    jsonData.data.sets.forEach(function(set) {",
+											"        set.lessons.forEach(function(lesson) {",
+											"            lesson.contents.forEach(function(content) {",
+											"                pm.expect(content).to.have.all.keys('id', 'type', 'content', 'order');",
+											"                if (content.type === 'quiz') {",
+											"                    pm.expect(content).to.have.property('options').that.is.an('array');",
+											"                    content.options.forEach(function(option) {",
+											"                        pm.expect(option).to.have.all.keys('id', 'option_text');",
+											"                    });",
+											"                }",
+											"            });",
+											"        });",
+											"    });",
+											"});",
+											"",
+											"// Test if date fields are in ISO 8601 format",
+											"pm.test(\"Date fields are in ISO 8601 format\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    var datePattern = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$/;",
+											"    pm.expect(datePattern.test(jsonData.data.created_at)).to.be.true;",
+											"    pm.expect(datePattern.test(jsonData.data.updated_at)).to.be.true;",
+											"    jsonData.data.sets.forEach(function(set) {",
+											"        set.lessons.forEach(function(lesson) {",
+											"            pm.expect(datePattern.test(lesson.created_at)).to.be.true;",
+											"            pm.expect(datePattern.test(lesson.updated_at)).to.be.true;",
+											"        });",
+											"    });",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-dev-fundamentals",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-dev-fundamentals"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B5b - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/wrong-slug",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"wrong-slug"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "B5c - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-dev-fundamentals",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-dev-fundamentals"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "C - Set",
+			"item": [
+				{
+					"name": "C1 - Add set",
+					"item": [
+						{
+							"name": "C1a - success (201)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'Set successfully added'",
+											"pm.test(\"Message is 'Set successfully added'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Set successfully added\");",
+											"});",
+											"",
+											"// Test if 'data' contains the expected fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.all.keys('name', 'order', 'id');",
+											"});",
+											"",
+											"// Test if 'data.name' is 'Web API Architecture Fundamentals'",
+											"pm.test(\"Data name is 'Web API Architecture Fundamentals'\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.name).to.eql(\"Web API Architecture Fundamentals\");",
+											"});",
+											"",
+											"// Test if 'data.order' is a number",
+											"pm.test(\"Data order is a number\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.order).to.to.a('number');",
+											"});",
+											"",
+											"// Test if 'data.id' is a number (assuming it is auto-generated by the system)",
+											"pm.test(\"Data id is a number\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.id).to.be.a('number');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Web API Architecture Fundamentals\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-security-essentials/sets",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-security-essentials",
+										"sets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C1b - invalid field (400)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"// Test if status is 'error'",
+											"pm.test(\"Status is error\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"error\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid field(s) in request'",
+											"pm.test(\"Message is Invalid field(s) in request\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid field(s) in request\");",
+											"});",
+											"",
+											"// Test if 'errors' is present in the response",
+											"pm.test(\"Errors field is present\", function () {",
+											"    pm.response.to.have.jsonBody(\"errors\");",
+											"}); ",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture/sets",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture",
+										"sets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C1c - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/wrong-slug/sets",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"wrong-slug",
+										"sets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C1d - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture/sets",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture",
+										"sets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C1e - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Web API Architecture Fundamentals\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/new-course/sets",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"new-course",
+										"sets"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "C2 - Delete set",
+					"item": [
+						{
+							"name": "C2a - success (200)",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture/sets/4",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture",
+										"sets",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C2b - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture/sets/9999",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture",
+										"sets",
+										"9999"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C2c - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture/sets/4",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture",
+										"sets",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "C2d - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-api-architecture/sets/4",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-api-architecture",
+										"sets",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "D - Lesson",
+			"item": [
+				{
+					"name": "D1 - Add lesson",
+					"item": [
+						{
+							"name": "D1a - success (201)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'Lesson successfully added'",
+											"pm.test(\"Message is 'Lesson successfully added'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Lesson successfully added\");",
+											"});",
+											"",
+											"// Test if 'data' contains the expected fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data).to.have.all.keys('name', 'order', 'id');",
+											"});",
+											"",
+											"// Test if 'data.name' is 'Introduction to Web API Architecture'",
+											"pm.test(\"Data name is 'Introduction to Web API Architecture'\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.name).to.eql(\"Introduction to Web API Architecture\");",
+											"});",
+											"",
+											"// Test if 'data.order' is a number",
+											"pm.test(\"Data order is a number\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.order).to.be.a('number'); ",
+											"});",
+											"",
+											"// Test if 'data.id' is a number (assuming it is auto-generated by the system)",
+											"pm.test(\"Data id is a number\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.data.id).to.be.a('number');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Introduction to Web API Architecture\",  \n    \"set_id\": 7,\n    \"contents\": [\n        {\n            \"type\": \"learn\",\n            \"content\": \"Web API (Application Programming Interface) architecture refers to the structural design of web-based APIs. It defines how different components of an API interact with each other and with external systems.\"\n        },\n        {\n            \"type\": \"quiz\",\n            \"content\": \"Which of the following is NOT typically considered a key component of Web API Architecture?\",\n            \"options\": [\n                {\n                    \"option_text\": \"Client\",\n                    \"is_correct\": false\n                },\n                {\n                    \"option_text\": \"Database Schema\",\n                    \"is_correct\": true\n                },\n                {\n                    \"option_text\": \"Endpoints\",\n                    \"is_correct\": false\n                },\n                {\n                    \"option_text\": \"HTTP Methods\",\n                    \"is_correct\": false\n                }   \n            ]\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D1b - invalid field (400)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"// Test if status is 'error'",
+											"pm.test(\"Status is error\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"error\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid field(s) in request'",
+											"pm.test(\"Message is Invalid field(s) in request\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid field(s) in request\");",
+											"});",
+											"",
+											"// Test if 'errors' is present in the response",
+											"pm.test(\"Errors field is present\", function () {",
+											"    pm.response.to.have.jsonBody(\"errors\");",
+											"}); ",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"set_id\": 9999,\n    \"contents\": \"order\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D1c - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"contents\": \"order\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D1d - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"\",\n    \"contents\": \"order\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "D2 - Delete lesson",
+					"item": [
+						{
+							"name": "D2a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'Lesson successfully deleted'",
+											"pm.test(\"Message is 'Lesson successfully deleted'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Lesson successfully deleted\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/35",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"35"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D2b - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/99999",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"99999"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D2c - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/4",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D2d - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/4",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "D3 - Check answer",
+					"item": [
+						{
+							"name": "D3a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'Check answer success'",
+											"pm.test(\"Message is 'Check answer success'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Check answer success\");",
+											"});",
+											"",
+											"// Test if data contains expected fields",
+											"pm.test(\"Data contains expected fields\", function () {",
+											"    const data = pm.response.json().data;",
+											"    pm.expect(data).to.have.property(\"question\");",
+											"    pm.expect(data).to.have.property(\"user_answer\");",
+											"    pm.expect(data).to.have.property(\"is_correct\");",
+											"});",
+											"",
+											"// Test if the question is correct",
+											"pm.test(\"Question is correct\", function () {",
+											"    pm.expect(pm.response.json().data.question).to.eql(\"What does HTML stand for?\");",
+											"});",
+											"",
+											"// Test if the user_answer is correct",
+											"pm.test(\"User answer is correct\", function () {",
+											"    pm.expect(pm.response.json().data.user_answer).to.eql(\"Hyper Text Markup Language\");",
+											"});",
+											"",
+											"// Test if the answer is marked as correct",
+											"pm.test(\"Answer is marked as correct\", function () {",
+											"    pm.expect(pm.response.json().data.is_correct).to.eql(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"option_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lesson-contents/2/check",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lesson-contents",
+										"2",
+										"check"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D3b - only for quiz type (400)",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"option_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lesson-contents/1/check",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lesson-contents",
+										"1",
+										"check"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D3c - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"option_id\": 99999\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/18/contents/68/check",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"18",
+										"contents",
+										"68",
+										"check"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D3d - forbidden (403)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"// Test if status is 'insufficient_permissions'",
+											"pm.test(\"Status is insufficient_permissions\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"insufficient_permissions\");",
+											"});",
+											"",
+											"// Test if message is 'Access forbidden'",
+											"pm.test(\"Message is Access forbidden\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Access forbidden\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"option_id\": 99999\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/18/contents/68/check",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"18",
+										"contents",
+										"68",
+										"check"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D3e - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \n    \"option_id\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lesson-contents/2/check-answer",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lesson-contents",
+										"2",
+										"check-answer"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "D4 - Complete lesson",
+					"item": [
+						{
+							"name": "D4a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'Lesson successfully completed'",
+											"pm.test(\"Message is 'Lesson successfully completed'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Lesson successfully completed\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/1/complete",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"1",
+										"complete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D4a - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/1/complete",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"1",
+										"complete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D4a - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/lessons/1/complete",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"lessons",
+										"1",
+										"complete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "E - User",
+			"item": [
+				{
+					"name": "E1 - Register to a course",
+					"item": [
+						{
+							"name": "E1a - success (201)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'User registered successful'",
+											"pm.test(\"Message is 'User registered successful'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"User registered successful\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/full-stack-mastery/register",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"full-stack-mastery",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "E1b - already registered (400)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"// Test if the status is 'error'",
+											"pm.test(\"Status is error\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"error\");",
+											"});",
+											"",
+											"// Test if the message is 'The user is already registered for this course'",
+											"pm.test(\"Message is 'The user is already registered for this course'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"The user is already registered for this course\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-dev-fundamentals/register",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-dev-fundamentals",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "E1c - not found (404)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"// Test if status is 'not_found'",
+											"pm.test(\"Status is not_found\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"not_found\");",
+											"});",
+											"",
+											"// Test if message is 'Resource not found'",
+											"pm.test(\"Message is Resource not found\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Resource not found\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/wrong-slug/register",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"wrong-slug",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "E1d - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/courses/web-dev-fundamentals/register",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"courses",
+										"web-dev-fundamentals",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "E2 - Get user proress",
+					"item": [
+						{
+							"name": "E2a - success (200)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test if the status is 'success'",
+											"pm.test(\"Status is success\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"success\");",
+											"});",
+											"",
+											"// Test if the message is 'User progress retrieved successfully'",
+											"pm.test(\"Message is 'User progress retrieved successfully'\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"User progress retrieved successfully\");",
+											"});",
+											"",
+											"// Test if the 'data' field contains 'progress' array",
+											"pm.test(\"Data contains 'progress' array\", function () {",
+											"    pm.expect(pm.response.json().data).to.have.property('progress').that.is.an('array');",
+											"});",
+											"",
+											"// Test the structure of the first item in 'progress'",
+											"pm.test(\"Progress array contains course details and completed lessons\", function () {",
+											"    const progress = pm.response.json().data.progress[0];",
+											"    ",
+											"    pm.expect(progress).to.have.property('course').that.is.an('object');",
+											"    pm.expect(progress.course).to.have.keys(['id', 'name', 'slug', 'description', 'is_published', 'created_at', 'updated_at']);",
+											"    ",
+											"    pm.expect(progress).to.have.property('completed_lessons').that.is.an('array');",
+											"    pm.expect(progress.completed_lessons[0]).to.have.keys(['id', 'name', 'order']);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{userToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/users/progress",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"progress"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "E2b - invalid token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"// Test if status is 'invalid_token'",
+											"pm.test(\"Status is invalid_token\", function () {",
+											"    pm.response.to.have.jsonBody(\"status\", \"invalid_token\");",
+											"});",
+											"",
+											"// Test if message is 'Invalid or expired token'",
+											"pm.test(\"Message is Invalid or expired token\", function () {",
+											"    pm.response.to.have.jsonBody(\"message\", \"Invalid or expired token\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/users/progress",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"users",
+										"progress"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{adminToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

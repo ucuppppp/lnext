@@ -1,0 +1,313 @@
+{
+    "status": "success",
+    "message": "Course details retrieved successfully",
+    "data": {
+        "id": 1,
+        "name": "Web Dev Fundamentals",
+        "slug": "web-dev-fundamentals",
+        "description": "Grasp the core technologies of HTML, CSS, and JavaScript.",
+        "is_published": 1,
+        "created_at": "2024-08-21T16:25:54.000000Z",
+        "updated_at": "2024-08-21T16:25:54.000000Z",
+        "sets": [
+            {
+                "id": 1,
+                "name": "HTML Basics",
+                "order": 0,
+                "lessons": [
+                    {
+                        "id": 1,
+                        "name": "Introduction to HTML",
+                        "order": 0,
+                        "contents": [
+                            {
+                                "id": 1,
+                                "type": "learn",
+                                "content": "HTML stands for HyperText Markup Language. It is the standard markup language for creating web pages.",
+                                "order": 0
+                            },
+                            {
+                                "id": 2,
+                                "type": "quiz",
+                                "content": "What does HTML stand for?",
+                                "order": 1,
+                                "options": [
+                                    {
+                                        "id": 1,
+                                        "option_text": "Hyper Text Markup Language"
+                                    },
+                                    {
+                                        "id": 2,
+                                        "option_text": "Home Tool Markup Language"
+                                    },
+                                    {
+                                        "id": 3,
+                                        "option_text": "Hyper Transfer Markup Language"
+                                    },
+                                    {
+                                        "id": 4,
+                                        "option_text": "Hyperlink and Text Markup Language"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 3,
+                                "type": "learn",
+                                "content": "HTML elements define the structure of a web page. They are enclosed in angle brackets (< and >).",
+                                "order": 2
+                            },
+                            {
+                                "id": 4,
+                                "type": "quiz",
+                                "content": "Which characters are used to enclose HTML elements?",
+                                "order": 3,
+                                "options": [
+                                    {
+                                        "id": 5,
+                                        "option_text": "< and >"
+                                    },
+                                    {
+                                        "id": 6,
+                                        "option_text": "[] and []"
+                                    },
+                                    {
+                                        "id": 7,
+                                        "option_text": "{} and {}"
+                                    },
+                                    {
+                                        "id": 8,
+                                        "option_text": "() and ()"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 5,
+                                "type": "learn",
+                                "content": "HTML attributes provide additional information about HTML elements. They are placed within the starting tag.",
+                                "order": 4
+                            },
+                            {
+                                "id": 6,
+                                "type": "quiz",
+                                "content": "Where are HTML attributes placed?",
+                                "order": 5,
+                                "options": [
+                                    {
+                                        "id": 9,
+                                        "option_text": "Within the starting tag"
+                                    },
+                                    {
+                                        "id": 10,
+                                        "option_text": "Within the closing tag"
+                                    },
+                                    {
+                                        "id": 11,
+                                        "option_text": "After the closing tag"
+                                    },
+                                    {
+                                        "id": 12,
+                                        "option_text": "Anywhere in the HTML document"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "name": "HTML Tags and Elements",
+                        "order": 1,
+                        "contents": [
+                            {
+                                "id": 7,
+                                "type": "learn",
+                                "content": "Common HTML elements include headings (<h1> to <h6>), paragraphs (<p>), images (<img>), links (<a>), and divisions (<div>).",
+                                "order": 0
+                            },
+                            {
+                                "id": 8,
+                                "type": "quiz",
+                                "content": "Which HTML element is used to define a paragraph?",
+                                "order": 1,
+                                "options": [
+                                    {
+                                        "id": 13,
+                                        "option_text": "<p>"
+                                    },
+                                    {
+                                        "id": 14,
+                                        "option_text": "<par>"
+                                    },
+                                    {
+                                        "id": 15,
+                                        "option_text": "<text>"
+                                    },
+                                    {
+                                        "id": 16,
+                                        "option_text": "<div>"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 9,
+                                "type": "learn",
+                                "content": "HTML headings structure content and improve readability. They range from <h1> (most important) to <h6> (least important).",
+                                "order": 2
+                            },
+                            {
+                                "id": 10,
+                                "type": "quiz",
+                                "content": "Which HTML element is used for the most important heading?",
+                                "order": 3,
+                                "options": [
+                                    {
+                                        "id": 17,
+                                        "option_text": "<h1>"
+                                    },
+                                    {
+                                        "id": 18,
+                                        "option_text": "<header>"
+                                    },
+                                    {
+                                        "id": 19,
+                                        "option_text": "<heading>"
+                                    },
+                                    {
+                                        "id": 20,
+                                        "option_text": "<title>"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 11,
+                                "type": "learn",
+                                "content": "The <img> element is used to embed images in a web page. It requires the 'src' attribute to specify the image source.",
+                                "order": 4
+                            },
+                            {
+                                "id": 12,
+                                "type": "quiz",
+                                "content": "Which HTML attribute specifies the image source for the <img> element?",
+                                "order": 5,
+                                "options": [
+                                    {
+                                        "id": 21,
+                                        "option_text": "src"
+                                    },
+                                    {
+                                        "id": 22,
+                                        "option_text": "alt"
+                                    },
+                                    {
+                                        "id": 23,
+                                        "option_text": "href"
+                                    },
+                                    {
+                                        "id": 24,
+                                        "option_text": "image"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "name": "HTML Structure",
+                        "order": 2,
+                        "contents": [
+                            {
+                                "id": 13,
+                                "type": "learn",
+                                "content": "The basic structure of an HTML document includes the <html>, <head>, and <body> elements.",
+                                "order": 0
+                            },
+                            {
+                                "id": 14,
+                                "type": "quiz",
+                                "content": "Which element is the root of an HTML document?",
+                                "order": 1,
+                                "options": [
+                                    {
+                                        "id": 25,
+                                        "option_text": "<html>"
+                                    },
+                                    {
+                                        "id": 26,
+                                        "option_text": "<body>"
+                                    },
+                                    {
+                                        "id": 27,
+                                        "option_text": "<head>"
+                                    },
+                                    {
+                                        "id": 28,
+                                        "option_text": "<div>"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 15,
+                                "type": "learn",
+                                "content": "The <head> element contains meta-information about the document, such as title and stylesheets.",
+                                "order": 2
+                            },
+                            {
+                                "id": 16,
+                                "type": "quiz",
+                                "content": "Where is the title of a web page defined?",
+                                "order": 3,
+                                "options": [
+                                    {
+                                        "id": 29,
+                                        "option_text": "<head>"
+                                    },
+                                    {
+                                        "id": 30,
+                                        "option_text": "<title>"
+                                    },
+                                    {
+                                        "id": 31,
+                                        "option_text": "<body>"
+                                    },
+                                    {
+                                        "id": 32,
+                                        "option_text": "<html>"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 17,
+                                "type": "learn",
+                                "content": "The <body> element contains the visible content of the web page.",
+                                "order": 4
+                            },
+                            {
+                                "id": 18,
+                                "type": "quiz",
+                                "content": "Where is the main content of a web page placed?",
+                                "order": 5,
+                                "options": [
+                                    {
+                                        "id": 33,
+                                        "option_text": "<body>"
+                                    },
+                                    {
+                                        "id": 34,
+                                        "option_text": "<head>"
+                                    },
+                                    {
+                                        "id": 35,
+                                        "option_text": "<html>"
+                                    },
+                                    {
+                                        "id": 36,
+                                        "option_text": "<div>"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

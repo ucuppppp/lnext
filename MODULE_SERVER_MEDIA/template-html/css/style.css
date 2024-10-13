@@ -1,0 +1,19 @@
+.container {
+    max-width: 800px;
+}
+.card, .btn {
+    border-radius: 4px;
+}
+.input-choice {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+}
+.input-choice + .card {
+    cursor: pointer;
+    user-select: none;
+}
+.input-choice:checked + .card {
+    outline: 1px solid #0d6efd;
+    background: #2c3034;
+}
