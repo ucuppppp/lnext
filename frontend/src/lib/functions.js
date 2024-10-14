@@ -8,8 +8,12 @@ export const setToken = (token) => {
 
 
 export const getToken = () => {
-    return localStorage.getItem("token");
-}
+    if (typeof window !== "undefined") { // Pastikan ini hanya dijalankan di client-side
+      return localStorage.getItem("token");
+    }
+    return null; // Kembalikan null jika tidak di client-side
+  };
+  
 
 export const setFullName = (fullName) => {
     if (fullName) {
@@ -20,5 +24,8 @@ export const setFullName = (fullName) => {
 }
 
 export const getFullName = () => {
-    return localStorage.getItem("fullName");
+    if (typeof window !== "undefined") { // Pastikan ini hanya dijalankan di client-side
+        return localStorage.getItem("fullName");
+      }
+    return null;
 }

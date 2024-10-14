@@ -1,108 +1,190 @@
 import Head from "next/head";
 import Navbar from "@/components/Navbar";
-import {Container, Heading, Spinner, useToast} from "@chakra-ui/react";
-import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
+import { Box, Container, Heading, Spinner, useToast, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
-import {getToken, setToken} from "@/lib/functions";
+import { getToken, setToken } from "@/lib/functions";
 import { toastPosition } from "@/lib/variables";
+import { useEffect, useState } from "react";
+
+// Fetch courses data
+const fetchCourses = async (token) => {
+  const res = await axiosInstance.get("/courses", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data?.data?.courses || [];
+};
+
+// Fetch user data
+const fetchUser = async (token) => {
+  const res = await axiosInstance.get("/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data?.data || {};
+};
+
+// Fetch progress data
+const fetchProgress = async (token) => {
+  const res = await axiosInstance.get("/users/progress", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data?.data?.progress || [];
+};
 
 export default function Home() {
   const router = useRouter();
-  const [sessionExpired, setSessionExpired] = useState(false);
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState({});
   const toast = useToast();
   
+  // State untuk menyimpan token
+  const [token, setTokenState] = useState(null);
+
+  // Mengambil token dari localStorage setelah komponen dimount
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
+    const storedToken = getToken();
+    setTokenState(storedToken);
+  }, []);
+
+  // Fetching user data
+  const { data: user, isError: isUserError } = useQuery({
+    queryKey: ["user", token],
+    queryFn: () => fetchUser(token),
+    enabled: !!token, // Hanya jalankan query jika token ada
+    onError: () => {
+      setToken(null);
       toast({
-        title: "Please login first",
+        title: "Your session has expired",
         status: "error",
-        duration: 4000,
+        duration: 1500,
         isClosable: true,
         position: toastPosition,
-      })
+      });
       router.push("/login");
-      return;
-    }
-    const fetchCourses = async () => {
-      try {
-        const res = await axiosInstance.get("/courses", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-    
-        setCourses(res.data?.data?.courses || []);
-      } catch (err) {
-        console.log(err);
-        setToken(null);
-        toast({
-          title: "Your session has expired",
-          status: "error",
-          duration: 1500,
-          isClosable: true,
-          position: toastPosition,
-        });
-        router.push("/login");
-      } finally {
-        setLoading(false);
-      }
-    };
+    },
+  });
 
-    const fetchUser = async () => {
-      try {
-        const res = await axiosInstance.get("/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUser(res.data?.data);
-      } catch (err) {
-        console.log(err);
-        setToken(null);
-        toast({
-          title: "Your session has expired",
-          status: "error",
-          duration: 1500,
-          isClosable: true,
-          position: toastPosition,
-        });
-        router.push("/login");
-      }
-    };
+  // Fetching courses data
+  const { data: courses = [], isLoading: coursesLoading } = useQuery({
+    queryKey: ["courses", token],
+    queryFn: () => fetchCourses(token),
+    enabled: !!token,
+    onError: (err) => {
+      console.error(err);
+      setToken(null);
+      toast({
+        title: "Your session has expired",
+        status: "error",
+        duration: 1500,
+        isClosable: true,
+        position: toastPosition,
+      });
+      router.push("/login");
+    },
+  });
 
-    fetchUser();
-    fetchCourses(); // Panggil fungsi fetchCourses
-}, [router]);
-
+  // Fetching progress data
+  const { data: progress = [], isLoading: progressLoading } = useQuery({
+    queryKey: ["progress", token],
+    queryFn: () => fetchProgress(token),
+    enabled: !!token,
+    onError: (err) => {
+      console.error(err);
+      toast({
+        title: "Failed to fetch progress",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: toastPosition,
+      });
+    },
+  });
 
   // Tampilkan loading spinner saat fetching
-  if (loading) {
+  if (!token || coursesLoading || progressLoading) {
     return (
-      <Container>
-        <Spinner /> {/* Menampilkan spinner loading */}
-      </Container>
+      <Box
+        minH="100vh"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Spinner size="xl" />
+      </Box>
     );
   }
+
+  // Membuat array id dari course yang sudah diambil di progress
+  const enrolledCourseIds = progress.map((p) => p.course.id);
+
+  // Fungsi untuk navigate ke halaman detail kursus
+  const handleCourseClick = (course) => {
+    // Redirect ke halaman detail kursus
+    router.push(`/${course.slug}`);
+  };
 
   return (
     <>
       <Head>
-        <title>Create Next App</title>
+        <title>My Courses</title>
         <meta name="description" content="Generated by create next app" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <Navbar fullName={user?.full_name} />
-      <main>
-        <Container>
-          <Heading>Your Courses</Heading>
-          {/* Render daftar kursus jika ada */}
-          
+      <main className="bg-gray-800">
+        <Container className="text-white ">
+          <Heading className="py-4">My Courses</Heading>
+
+          {/* Check if user has progress */}
+          {progress.length === 0 ? (
+            <Text>You have not enrolled in any courses.</Text>
+          ) : (
+            progress.map((p) => (
+              <Box
+                key={p.course.id}
+                bg="gray.600"
+                p={4}
+                my={4}
+                borderRadius="md"
+                boxShadow="sm"
+                onClick={() => handleCourseClick(p.course)} // Navigasi ke halaman detail kursus berdasarkan slug
+                cursor="pointer"
+              >
+                <Heading as="h3" size="md">{p.course.name}</Heading>
+                <Text mt={2}>{p.course.description}</Text>
+              </Box>
+            ))
+          )}
+
+          <Heading>Other Courses</Heading>
+          {courses.length === 0 ? (
+            <Text>There are no other courses available.</Text>
+          ) : (
+            courses
+              .filter((course) => !enrolledCourseIds.includes(course.id)) // Filter courses yang belum diambil
+              .map((course) => (
+                <Box
+                  key={course.id}
+                  bg="gray.600"
+                  p={4}
+                  my={4}
+                  borderRadius="md"
+                  boxShadow="sm"
+                  onClick={() => handleCourseClick(course)} // Navigasi ke halaman detail kursus berdasarkan slug
+                  cursor="pointer"
+                >
+                  <Heading as="h3" size="md">{course.name}</Heading>
+                  <Text mt={2}>{course.description}</Text>
+                </Box>
+              ))
+          )}
         </Container>
       </main>
     </>
