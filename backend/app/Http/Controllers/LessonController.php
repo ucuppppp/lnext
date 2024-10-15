@@ -160,12 +160,14 @@ class LessonController extends Controller
 
         $lesson_content = LessonContent::where('id', $ls_id)->first();
 
+
         if ($lesson_content->type !== 'quiz') {
             return \response()->json([
                 "status" => "error",
                 "message" => "Only for quiz content"
             ], 400);
         }
+        // dd($request['option_id']);
 
         $option = Option::where('id', $request['option_id'])->where('lesson_content_id', $lesson_content->id)->first();
 

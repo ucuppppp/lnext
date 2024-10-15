@@ -10,6 +10,8 @@ import {
   Progress,
   Badge,
   Spacer,
+  Divider,
+  Flex,
 } from "@chakra-ui/react";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
@@ -17,6 +19,7 @@ import {useQuery} from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
 import {getToken, setToken} from "@/lib/functions";
 import {toastPosition} from "@/lib/variables";
+import { progress } from "framer-motion";
 
 // Function to fetch course data
 const fetchCourse = async (token, courseSlug) => {
@@ -268,6 +271,58 @@ export default function DetailCourse() {
         ) : (
           <Text>No course sets available</Text>
         )}
+      {progressValue === 100 ? (
+        <Box
+          border="2px solid"
+          borderColor="gray.300"
+          borderRadius="md"
+          padding={6}
+          mx="auto"
+          textAlign="center"
+          bg={"gray.500"}
+          boxShadow="lg"
+        >
+          {/* Header Sertifikat */}
+          <Text fontSize="4xl" fontWeight="bold" mb={4} color="white">
+            Certificate of Completion
+          </Text>
+
+          {/* Subtitle Sertifikat */}
+          <Text fontSize="lg" mb={6} fontStyle="italic" color="gray.200">
+            This is to certify that
+          </Text>
+
+          {/* Nama Penerima Sertifikat */}
+          <Text
+            fontSize="4xl"
+            fontWeight="bold"
+            color="white"
+            sx={{
+              "-webkit-text-stroke": "1px black",
+              // "text-shadow": "2px 2px 2px rgba(0,0,0,0.3)",
+            }}
+            mb={2}
+          >
+            {user?.full_name}
+          </Text>
+
+          {/* Divider */}
+          <Divider borderColor="gray.400" my={6} />
+
+          {/* Deskripsi Sertifikat */}
+          <Text fontSize="xl" mb={4} color="gray.200">
+            has successfully completed the course
+          </Text>
+
+          {/* Nama Kursus */}
+          <Text fontSize="2xl" fontWeight="bold" mb={6} color="yellow.300">
+            {course?.name}
+          </Text>
+
+          {/* Divider */}
+          <Divider borderColor="gray.400" my={6} />
+        </Box>
+      ) : null}
       </Container>
     </div>
   );

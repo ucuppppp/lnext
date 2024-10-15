@@ -1,20 +1,57 @@
-import {Button, FormControl, Text, Stack} from "@chakra-ui/react";
+import {Button, FormControl, Text, Stack, useToast} from "@chakra-ui/react";
 import {useFormik} from "formik";
+import axiosInstance from "@/lib/axios";
 
-const Quiz = ({contentText, options, onNext}) => {
+
+
+const Quiz = ({contentText, options, onNext, token, content_id}) => {
+
+  const toast = useToast();
   const formik = useFormik({
     initialValues: {
       option_id: "", // Menyimpan id dari opsi yang dipilih
     },
     onSubmit: (values) => {
-      console.log("Selected option ID:", values.option_id); // Menampilkan opsi yang dipilih di console
-      onNext(); // Panggil fungsi untuk lanjut ke konten berikutnya
+      checkAnswer(values);
+      // onNext(); // Panggil fungsi untuk lanjut ke konten berikutnya
     },
   });
 
   // Handler untuk memilih opsi
   const handleOptionSelect = (id) => {
     formik.setFieldValue("option_id", id); // Set option_id yang dipilih
+  };
+
+  const checkAnswer = async (values) => {
+    try {
+      const res = await axiosInstance.post(`/lesson-contents/${content_id}/check`, {
+        option_id: values.option_id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.data.data.is_correct) {
+        toast({
+          title: "Correct!",
+          status: "success",
+          duration: 4000,
+          isClosable: true,
+          position: "top",
+        })
+        onNext();
+      }else {
+        toast({
+          title: "Wrong!",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+          position: "top",
+        })
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
